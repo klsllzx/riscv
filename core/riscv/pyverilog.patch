@@ -1,0 +1,1425 @@
+diff --git a/core/riscv/riscv_trace_sim.v b/core/riscv/exclude/riscv_trace_sim.v
+similarity index 100%
+rename from core/riscv/riscv_trace_sim.v
+rename to core/riscv/exclude/riscv_trace_sim.v
+diff --git a/core/riscv/riscv_xilinx_2r1w.v b/core/riscv/exclude/riscv_xilinx_2r1w.v
+similarity index 90%
+rename from core/riscv/riscv_xilinx_2r1w.v
+rename to core/riscv/exclude/riscv_xilinx_2r1w.v
+index b974e54..b41a689 100644
+--- a/core/riscv/riscv_xilinx_2r1w.v
++++ b/core/riscv/exclude/riscv_xilinx_2r1w.v
+@@ -78,7 +78,7 @@ genvar i;
+ // Registers 0 - 15
+ generate
+ for (i=0;i<32;i=i+1)
+-begin : reg_loop1
++begin : 
+     RAM16X1D reg_bit1a(.WCLK(clk_i), .WE(write_banka_w), .A0(rd0_i[0]), .A1(rd0_i[1]), .A2(rd0_i[2]), .A3(rd0_i[3]), .D(rd0_value_i[i]), .DPRA0(ra_i[0]), .DPRA1(ra_i[1]), .DPRA2(ra_i[2]), .DPRA3(ra_i[3]), .DPO(rs1_0_15_w[i]), .SPO(/* open */));
+     RAM16X1D reg_bit2a(.WCLK(clk_i), .WE(write_banka_w), .A0(rd0_i[0]), .A1(rd0_i[1]), .A2(rd0_i[2]), .A3(rd0_i[3]), .D(rd0_value_i[i]), .DPRA0(rb_i[0]), .DPRA1(rb_i[1]), .DPRA2(rb_i[2]), .DPRA3(rb_i[3]), .DPO(rs2_0_15_w[i]), .SPO(/* open */));
+ end
+@@ -87,7 +87,7 @@ endgenerate
+ // Registers 16 - 31
+ generate
+ for (i=0;i<32;i=i+1)
+-begin : reg_loop2
++begin : 
+     RAM16X1D reg_bit1b(.WCLK(clk_i), .WE(write_bankb_w), .A0(rd0_i[0]), .A1(rd0_i[1]), .A2(rd0_i[2]), .A3(rd0_i[3]), .D(rd0_value_i[i]), .DPRA0(ra_i[0]), .DPRA1(ra_i[1]), .DPRA2(ra_i[2]), .DPRA3(ra_i[3]), .DPO(rs1_16_31_w[i]), .SPO(/* open */));
+     RAM16X1D reg_bit2b(.WCLK(clk_i), .WE(write_bankb_w), .A0(rd0_i[0]), .A1(rd0_i[1]), .A2(rd0_i[2]), .A3(rd0_i[3]), .D(rd0_value_i[i]), .DPRA0(rb_i[0]), .DPRA1(rb_i[1]), .DPRA2(rb_i[2]), .DPRA3(rb_i[3]), .DPO(rs2_16_31_w[i]), .SPO(/* open */));
+ end
+@@ -129,28 +129,28 @@ endmodule
+ //-------------------------------------------------------------
+ // RAM16X1D: Verilator target RAM16X1D model
+ //-------------------------------------------------------------
+-`ifdef verilator
+-module RAM16X1D (DPO, SPO, A0, A1, A2, A3, D, DPRA0, DPRA1, DPRA2, DPRA3, WCLK, WE);
++// `ifdef verilator
++// module RAM16X1D (DPO, SPO, A0, A1, A2, A3, D, DPRA0, DPRA1, DPRA2, DPRA3, WCLK, WE);
+ 
+-    parameter INIT = 16'h0000;
++//     parameter INIT = 16'h0000;
+ 
+-    output DPO, SPO;
++//     output DPO, SPO;
+ 
+-    input  A0, A1, A2, A3, D, DPRA0, DPRA1, DPRA2, DPRA3, WCLK, WE;
++//     input  A0, A1, A2, A3, D, DPRA0, DPRA1, DPRA2, DPRA3, WCLK, WE;
+ 
+-    reg  [15:0] mem;
+-    wire [3:0] adr;
++//     reg  [15:0] mem;
++//     wire [3:0] adr;
+ 
+-    assign adr = {A3, A2, A1, A0};
+-    assign SPO = mem[adr];
+-    assign DPO = mem[{DPRA3, DPRA2, DPRA1, DPRA0}];
++//     assign adr = {A3, A2, A1, A0};
++//     assign SPO = mem[adr];
++//     assign DPO = mem[{DPRA3, DPRA2, DPRA1, DPRA0}];
+ 
+-    initial 
+-        mem = INIT;
++//     initial 
++//         mem = INIT;
+ 
+-    always @(posedge WCLK) 
+-        if (WE == 1'b1)
+-            mem[adr] <= D;
++//     always @(posedge WCLK) 
++//         if (WE == 1'b1)
++//             mem[adr] <= D;
+ 
+-endmodule
+-`endif
++// endmodule
++// `endif
+diff --git a/core/riscv/riscv_alu.v b/core/riscv/riscv_alu.v
+index 82f4b6a..a37d1f8 100644
+--- a/core/riscv/riscv_alu.v
++++ b/core/riscv/riscv_alu.v
+@@ -59,7 +59,7 @@ module riscv_alu
+ //-----------------------------------------------------------------
+ reg [31:0]      result_r;
+ 
+-reg [31:16]     shift_right_fill_r;
++reg [15:0]     shift_right_fill_r;
+ reg [31:0]      shift_right_1_r;
+ reg [31:0]      shift_right_2_r;
+ reg [31:0]      shift_right_4_r;
+@@ -131,27 +131,27 @@ begin
+                 shift_right_fill_r = 16'b0000000000000000;
+ 
+             if (alu_b_i[0] == 1'b1)
+-                shift_right_1_r = {shift_right_fill_r[31], alu_a_i[31:1]};
++                shift_right_1_r = {shift_right_fill_r[15], alu_a_i[31:1]};
+             else
+                 shift_right_1_r = alu_a_i;
+ 
+             if (alu_b_i[1] == 1'b1)
+-                shift_right_2_r = {shift_right_fill_r[31:30], shift_right_1_r[31:2]};
++                shift_right_2_r = {shift_right_fill_r[15:14], shift_right_1_r[31:2]};
+             else
+                 shift_right_2_r = shift_right_1_r;
+ 
+             if (alu_b_i[2] == 1'b1)
+-                shift_right_4_r = {shift_right_fill_r[31:28], shift_right_2_r[31:4]};
++                shift_right_4_r = {shift_right_fill_r[15:12], shift_right_2_r[31:4]};
+             else
+                 shift_right_4_r = shift_right_2_r;
+ 
+             if (alu_b_i[3] == 1'b1)
+-                shift_right_8_r = {shift_right_fill_r[31:24], shift_right_4_r[31:8]};
++                shift_right_8_r = {shift_right_fill_r[15:8], shift_right_4_r[31:8]};
+             else
+                 shift_right_8_r = shift_right_4_r;
+ 
+             if (alu_b_i[4] == 1'b1)
+-                result_r = {shift_right_fill_r[31:16], shift_right_8_r[31:16]};
++                result_r = {shift_right_fill_r[15:0], shift_right_8_r[31:16]};
+             else
+                 result_r = shift_right_8_r;
+        end       
+diff --git a/core/riscv/riscv_core.v b/core/riscv/riscv_core.v
+index f4f8571..75d76b4 100644
+--- a/core/riscv/riscv_core.v
++++ b/core/riscv/riscv_core.v
+@@ -44,11 +44,11 @@ module riscv_core
+ // Params
+ //-----------------------------------------------------------------
+ #(
+-     parameter SUPPORT_MULDIV   = 1
+-    ,parameter SUPPORT_SUPER    = 0
++     parameter SUPPORT_MULDIV   = 0
++    ,parameter SUPPORT_SUPER    = 1
+     ,parameter SUPPORT_MMU      = 0
+-    ,parameter SUPPORT_LOAD_BYPASS = 1
+-    ,parameter SUPPORT_MUL_BYPASS = 1
++    ,parameter SUPPORT_LOAD_BYPASS = 0
++    ,parameter SUPPORT_MUL_BYPASS = 0
+     ,parameter SUPPORT_REGFILE_XILINX = 0
+     ,parameter EXTRA_DECODE_STAGE = 0
+     ,parameter MEM_CACHE_ADDR_MIN = 32'h80000000
+diff --git a/core/riscv/riscv_decode.v b/core/riscv/riscv_decode.v
+index 97f4818..131da23 100644
+--- a/core/riscv/riscv_decode.v
++++ b/core/riscv/riscv_decode.v
+@@ -86,51 +86,51 @@ wire        enable_muldiv_w     = SUPPORT_MULDIV;
+ //-----------------------------------------------------------------
+ // Extra decode stage (to improve cycle time)
+ //-----------------------------------------------------------------
+-generate
+-if (EXTRA_DECODE_STAGE)
+-begin
+-    wire [31:0] fetch_in_instr_w = (fetch_in_fault_page_i | fetch_in_fault_fetch_i) ? 32'b0 : fetch_in_instr_i;
+-    reg [66:0]  buffer_q;
+-
+-    always @(posedge clk_i or posedge rst_i)
+-    if (rst_i)
+-        buffer_q <= 67'b0;
+-    else if (squash_decode_i)
+-        buffer_q <= 67'b0;
+-    else if (fetch_out_accept_i || !fetch_out_valid_o)
+-        buffer_q <= {fetch_in_valid_i, fetch_in_fault_page_i, fetch_in_fault_fetch_i, fetch_in_instr_w, fetch_in_pc_i};
+-
+-    assign {fetch_out_valid_o,
+-            fetch_out_fault_page_o,
+-            fetch_out_fault_fetch_o,
+-            fetch_out_instr_o,
+-            fetch_out_pc_o} = buffer_q;
+-
+-    riscv_decoder
+-    u_dec
+-    (
+-         .valid_i(fetch_out_valid_o)
+-        ,.fetch_fault_i(fetch_out_fault_page_o | fetch_out_fault_fetch_o)
+-        ,.enable_muldiv_i(enable_muldiv_w)
+-        ,.opcode_i(fetch_out_instr_o)
+-
+-        ,.invalid_o(fetch_out_instr_invalid_o)
+-        ,.exec_o(fetch_out_instr_exec_o)
+-        ,.lsu_o(fetch_out_instr_lsu_o)
+-        ,.branch_o(fetch_out_instr_branch_o)
+-        ,.mul_o(fetch_out_instr_mul_o)
+-        ,.div_o(fetch_out_instr_div_o)
+-        ,.csr_o(fetch_out_instr_csr_o)
+-        ,.rd_valid_o(fetch_out_instr_rd_valid_o)
+-    );
+-
+-    assign fetch_in_accept_o        = fetch_out_accept_i;
+-end
+-//-----------------------------------------------------------------
+-// Straight through decode
+-//-----------------------------------------------------------------
+-else
+-begin
++// generate
++// if (EXTRA_DECODE_STAGE)
++// begin
++//     wire [31:0] fetch_in_instr_w = (fetch_in_fault_page_i | fetch_in_fault_fetch_i) ? 32'b0 : fetch_in_instr_i;
++//     reg [66:0]  buffer_q;
++
++//     always @(posedge clk_i or posedge rst_i)
++//     if (rst_i)
++//         buffer_q <= 67'b0;
++//     else if (squash_decode_i)
++//         buffer_q <= 67'b0;
++//     else if (fetch_out_accept_i || !fetch_out_valid_o)
++//         buffer_q <= {fetch_in_valid_i, fetch_in_fault_page_i, fetch_in_fault_fetch_i, fetch_in_instr_w, fetch_in_pc_i};
++
++//     assign {fetch_out_valid_o,
++//             fetch_out_fault_page_o,
++//             fetch_out_fault_fetch_o,
++//             fetch_out_instr_o,
++//             fetch_out_pc_o} = buffer_q;
++
++//     riscv_decoder
++//     u_dec
++//     (
++//          .valid_i(fetch_out_valid_o)
++//         ,.fetch_fault_i(fetch_out_fault_page_o | fetch_out_fault_fetch_o)
++//         ,.enable_muldiv_i(enable_muldiv_w)
++//         ,.opcode_i(fetch_out_instr_o)
++
++//         ,.invalid_o(fetch_out_instr_invalid_o)
++//         ,.exec_o(fetch_out_instr_exec_o)
++//         ,.lsu_o(fetch_out_instr_lsu_o)
++//         ,.branch_o(fetch_out_instr_branch_o)
++//         ,.mul_o(fetch_out_instr_mul_o)
++//         ,.div_o(fetch_out_instr_div_o)
++//         ,.csr_o(fetch_out_instr_csr_o)
++//         ,.rd_valid_o(fetch_out_instr_rd_valid_o)
++//     );
++
++//     assign fetch_in_accept_o        = fetch_out_accept_i;
++// end
++// //-----------------------------------------------------------------
++// // Straight through decode
++// //-----------------------------------------------------------------
++// else
++// begin
+     wire [31:0] fetch_in_instr_w = (fetch_in_fault_page_i | fetch_in_fault_fetch_i) ? 32'b0 : fetch_in_instr_i;
+ 
+     riscv_decoder
+@@ -159,8 +159,8 @@ begin
+     assign fetch_out_fault_fetch_o  = fetch_in_fault_fetch_i;
+ 
+     assign fetch_in_accept_o        = fetch_out_accept_i;
+-end
+-endgenerate
++// end
++// endgenerate
+ 
+ 
+ endmodule
+diff --git a/core/riscv/riscv_lsu.v b/core/riscv/riscv_lsu.v
+index 21ef076..b2a4a9a 100644
+--- a/core/riscv/riscv_lsu.v
++++ b/core/riscv/riscv_lsu.v
+@@ -179,11 +179,11 @@ reg [3:0]   mem_wr_r;
+ 
+ always @ *
+ begin
+-    mem_addr_r      = 32'b0;
+-    mem_data_r      = 32'b0;
+-    mem_unaligned_r = 1'b0;
+-    mem_wr_r        = 4'b0;
+-    mem_rd_r        = 1'b0;
++    // mem_addr_r      = 32'b0;
++    // mem_data_r      = 32'b0;
++    // mem_unaligned_r = 1'b0;
++    // mem_wr_r        = 4'b0;
++    // mem_rd_r        = 1'b0;
+ 
+     if (opcode_valid_i && ((opcode_opcode_i & `INST_CSRRW_MASK) == `INST_CSRRW))
+         mem_addr_r = opcode_ra_operand_i;
+@@ -191,14 +191,18 @@ begin
+         mem_addr_r = opcode_ra_operand_i + {{20{opcode_opcode_i[31]}}, opcode_opcode_i[31:20]};
+     else
+         mem_addr_r = opcode_ra_operand_i + {{20{opcode_opcode_i[31]}}, opcode_opcode_i[31:25], opcode_opcode_i[11:7]};
++end
+ 
++always @ *
++begin
+     if (opcode_valid_i && req_sw_lw_w)
+         mem_unaligned_r = (mem_addr_r[1:0] != 2'b0);
+     else if (opcode_valid_i && req_sh_lh_w)
+         mem_unaligned_r = mem_addr_r[0];
+-
+-    mem_rd_r = (opcode_valid_i && load_inst_w && !mem_unaligned_r);
+-
++end
++    assign mem_rd_r = (opcode_valid_i && load_inst_w && !mem_unaligned_r);
++always @ *
++begin
+     if (opcode_valid_i && ((opcode_opcode_i & `INST_SW_MASK) == `INST_SW) && !mem_unaligned_r)
+     begin
+         mem_data_r  = opcode_rb_operand_i;
+@@ -243,11 +247,17 @@ begin
+             mem_wr_r    = 4'b0001;
+         end
+         default :
+-        ;
++        begin
++        mem_wr_r        = 4'b0;
++        mem_data_r      = 32'b0;
++        end
+         endcase
+     end
+     else
++    begin
+         mem_wr_r    = 4'b0;
++        mem_data_r      = 32'b0;
++    end
+ end
+ 
+ wire dcache_flush_w      = ((opcode_opcode_i & `INST_CSRRW_MASK) == `INST_CSRRW) && (opcode_opcode_i[31:20] == `CSR_DFLUSH);
+@@ -341,7 +351,12 @@ wire [31:0] resp_addr_w;
+ wire        resp_byte_w;
+ wire        resp_half_w;
+ wire        resp_signed_w;
+-
++wire accept_o;
++wire valid_o;
++wire [35:0] data_in_i;
++assign data_in_i = {mem_addr_q, mem_ls_q, mem_xh_q, mem_xb_q, mem_load_q};
++wire [35:0] data_out_o;
++assign data_out_o = {resp_addr_w, resp_signed_w, resp_half_w, resp_byte_w, resp_load_w};
+ riscv_lsu_fifo
+ #(
+      .WIDTH(36)
+@@ -354,11 +369,11 @@ u_lsu_request
+     ,.rst_i(rst_i)
+ 
+     ,.push_i(((mem_rd_o || (|mem_wr_o) || mem_writeback_o || mem_invalidate_o || mem_flush_o) && mem_accept_i) || (mem_unaligned_e1_q && ~delay_lsu_e2_w))
+-    ,.data_in_i({mem_addr_q, mem_ls_q, mem_xh_q, mem_xb_q, mem_load_q})
+-    ,.accept_o()
++    ,.data_in_i(data_in_i)
++    ,.accept_o(accept_o)
+ 
+-    ,.valid_o()
+-    ,.data_out_o({resp_addr_w, resp_signed_w, resp_half_w, resp_byte_w, resp_load_w})
++    ,.valid_o(valid_o)
++    ,.data_out_o(data_out_o)
+     ,.pop_i(mem_ack_i || mem_unaligned_e2_q)
+ );
+ 
+@@ -486,10 +501,10 @@ begin
+     rd_ptr_q  <= {(ADDR_W) {1'b0}};
+     wr_ptr_q  <= {(ADDR_W) {1'b0}};
+ 
+-    for (i=0;i<DEPTH;i=i+1)
+-    begin
+-        ram_q[i] <= {(WIDTH) {1'b0}};
+-    end
++    // for (i=0;i<DEPTH;i=i+1)
++    // begin
++    //     ram_q[i] <= {(WIDTH) {1'b0}};
++    // end
+ end
+ else
+ begin
+diff --git a/core/riscv/riscv_mmu.v b/core/riscv/riscv_mmu.v
+index 105d0bf..874de97 100644
+--- a/core/riscv/riscv_mmu.v
++++ b/core/riscv/riscv_mmu.v
+@@ -131,411 +131,411 @@ localparam  STATE_UPDATE       = 3;
+ //-----------------------------------------------------------------
+ // Basic MMU support
+ //-----------------------------------------------------------------
+-generate
+-if (SUPPORT_MMU)
+-begin
+-
+-    //-----------------------------------------------------------------
+-    // Registers
+-    //-----------------------------------------------------------------
+-    reg [STATE_W-1:0] state_q;
+-    wire              idle_w = (state_q == STATE_IDLE);
+-
+-    // Magic combo used only by MMU
+-    wire        resp_mmu_w   = (lsu_out_resp_tag_i[9:7] == 3'b111);
+-    wire        resp_valid_w = resp_mmu_w & lsu_out_ack_i;
+-    wire        resp_error_w = resp_mmu_w & lsu_out_error_i;
+-    wire [31:0] resp_data_w  = lsu_out_data_rd_i;
+-
+-    wire        cpu_accept_w;
+-
+-    //-----------------------------------------------------------------
+-    // Load / Store
+-    //-----------------------------------------------------------------
+-    reg       load_q;
+-    reg [3:0] store_q;
+-
+-    always @ (posedge clk_i or posedge rst_i)
+-    if (rst_i)
+-        load_q <= 1'b0;
+-    else if (lsu_in_rd_i)
+-        load_q <= ~lsu_in_accept_o;
+-
+-    always @ (posedge clk_i or posedge rst_i)
+-    if (rst_i)
+-        store_q <= 4'b0;
+-    else if (|lsu_in_wr_i)
+-        store_q <= lsu_in_accept_o ? 4'b0 : lsu_in_wr_i;
+-
+-    wire       load_w  = lsu_in_rd_i | load_q;
+-    wire [3:0] store_w = lsu_in_wr_i | store_q;
+-
+-    reg [31:0] lsu_in_addr_q;
+-
+-    always @ (posedge clk_i or posedge rst_i)
+-    if (rst_i)
+-        lsu_in_addr_q <= 32'b0;
+-    else if (load_w || (|store_w))
+-        lsu_in_addr_q <= lsu_in_addr_i;
+-
+-    wire [31:0] lsu_addr_w = (load_w || (|store_w)) ? lsu_in_addr_i : lsu_in_addr_q;
+-
+-    //-----------------------------------------------------------------
+-    // Page table walker
+-    //-----------------------------------------------------------------
+-    wire        itlb_hit_w;
+-    wire        dtlb_hit_w;
+-
+-    reg         dtlb_req_q;
+-
+-    // Global enable
+-    wire        vm_enable_w = satp_i[`SATP_MODE_R];
+-    wire [31:0] ptbr_w      = {satp_i[`SATP_PPN_R], 12'b0};
+-
+-    wire        ifetch_vm_w = (fetch_in_priv_i != `PRIV_MACHINE);
+-    wire        dfetch_vm_w = (priv_d_i != `PRIV_MACHINE);
+-
+-    wire        supervisor_i_w = (fetch_in_priv_i == `PRIV_SUPER);
+-    wire        supervisor_d_w = (priv_d_i == `PRIV_SUPER);
+-
+-    wire        vm_i_enable_w = (ifetch_vm_w);
+-    wire        vm_d_enable_w = (vm_enable_w & dfetch_vm_w);
+-
+-    // TLB entry does not match request address
+-    wire        itlb_miss_w = fetch_in_rd_i & vm_i_enable_w & ~itlb_hit_w;
+-    wire        dtlb_miss_w = (load_w || (|store_w)) & vm_d_enable_w & ~dtlb_hit_w;
+-
+-    // Data miss is higher priority than instruction...
+-    wire [31:0] request_addr_w = idle_w ? 
+-                                (dtlb_miss_w ? lsu_addr_w : fetch_in_pc_i) :
+-                                 dtlb_req_q ? lsu_addr_w : fetch_in_pc_i;
+-
+-    reg [31:0]  pte_addr_q;
+-    reg [31:0]  pte_entry_q;
+-    reg [31:0]  virt_addr_q;
+-
+-    wire [31:0] pte_ppn_w   = {`PAGE_PFN_SHIFT'b0, resp_data_w[31:`PAGE_PFN_SHIFT]};
+-    wire [9:0]  pte_flags_w = resp_data_w[9:0];
+-
+-    always @ (posedge clk_i or posedge rst_i)
+-    if (rst_i)
+-    begin
+-        pte_addr_q  <= 32'b0;
+-        pte_entry_q <= 32'b0;
+-        virt_addr_q <= 32'b0;
+-        dtlb_req_q  <= 1'b0;
+-        state_q     <= STATE_IDLE;
+-    end
+-    else
+-    begin
+-        // TLB miss, walk page table
+-        if (state_q == STATE_IDLE && (itlb_miss_w || dtlb_miss_w))
+-        begin
+-            pte_addr_q  <= ptbr_w + {20'b0, request_addr_w[31:22], 2'b0};
+-            virt_addr_q <= request_addr_w;
+-            dtlb_req_q  <= dtlb_miss_w;
+-
+-            state_q     <= STATE_LEVEL_FIRST;
+-        end
+-        // First level (4MB superpage)
+-        else if (state_q == STATE_LEVEL_FIRST && resp_valid_w)
+-        begin
+-            // Error or page not present
+-            if (resp_error_w || !resp_data_w[`PAGE_PRESENT])
+-            begin
+-                pte_entry_q <= 32'b0;
+-                state_q     <= STATE_UPDATE;
+-            end
+-            // Valid entry, but another level to fetch
+-            else if (!(resp_data_w[`PAGE_READ] || resp_data_w[`PAGE_WRITE] || resp_data_w[`PAGE_EXEC]))
+-            begin
+-                pte_addr_q  <= {resp_data_w[29:10], 12'b0} + {20'b0, request_addr_w[21:12], 2'b0};
+-                state_q     <= STATE_LEVEL_SECOND;
+-            end
+-            // Valid entry, actual valid PTE
+-            else
+-            begin
+-                pte_entry_q <= ((pte_ppn_w | {22'b0, request_addr_w[21:12]}) << `MMU_PGSHIFT) | {22'b0, pte_flags_w};
+-                state_q     <= STATE_UPDATE;
+-            end
+-        end
+-        // Second level (4KB page)
+-        else if (state_q == STATE_LEVEL_SECOND && resp_valid_w)
+-        begin
+-            // Valid entry, final level
+-            if (resp_data_w[`PAGE_PRESENT])
+-            begin
+-                pte_entry_q <= (pte_ppn_w << `MMU_PGSHIFT) | {22'b0, pte_flags_w};
+-                state_q     <= STATE_UPDATE;
+-            end
+-            // Page fault
+-            else
+-            begin
+-                pte_entry_q <= 32'b0;
+-                state_q     <= STATE_UPDATE;
+-            end
+-        end
+-        else if (state_q == STATE_UPDATE)
+-        begin
+-            state_q    <= STATE_IDLE;
+-        end
+-    end
+-
+-    //-----------------------------------------------------------------
+-    // IMMU TLB
+-    //-----------------------------------------------------------------
+-    reg         itlb_valid_q;
+-    reg [31:12] itlb_va_addr_q;
+-    reg [31:0]  itlb_entry_q;
+-
+-    always @ (posedge clk_i or posedge rst_i)
+-    if (rst_i)
+-        itlb_valid_q <= 1'b0;
+-    else if (flush_i)
+-        itlb_valid_q <= 1'b0;
+-    else if (state_q == STATE_UPDATE && !dtlb_req_q)
+-        itlb_valid_q <= (itlb_va_addr_q == fetch_in_pc_i[31:12]); // Fetch TLB still matches incoming request
+-    else if (state_q != STATE_IDLE && !dtlb_req_q)
+-        itlb_valid_q <= 1'b0;
+-
+-    always @ (posedge clk_i or posedge rst_i)
+-    if (rst_i)
+-    begin
+-        itlb_va_addr_q <= 20'b0;
+-        itlb_entry_q   <= 32'b0;
+-    end
+-    else if (state_q == STATE_UPDATE && !dtlb_req_q)
+-    begin
+-        itlb_va_addr_q <= virt_addr_q[31:12];
+-        itlb_entry_q   <= pte_entry_q;
+-    end
+-
+-    // TLB address matched (even on page fault)
+-    assign itlb_hit_w   = fetch_in_rd_i & itlb_valid_q & (itlb_va_addr_q == fetch_in_pc_i[31:12]);
+-
+-    reg pc_fault_r;
+-    always @ *
+-    begin
+-        pc_fault_r = 1'b0;
+-
+-        if (vm_i_enable_w && itlb_hit_w)
+-        begin
+-            // Supervisor mode
+-            if (supervisor_i_w)
+-            begin
+-                // User page, supervisor cannot execute
+-                if (itlb_entry_q[`PAGE_USER])
+-                    pc_fault_r = 1'b1;
+-                // Check exec permissions
+-                else
+-                    pc_fault_r = ~itlb_entry_q[`PAGE_EXEC];
+-            end
+-            // User mode
+-            else
+-                pc_fault_r = (~itlb_entry_q[`PAGE_EXEC]) | (~itlb_entry_q[`PAGE_USER]);
+-        end
+-    end
+-
+-    reg pc_fault_q;
+-
+-    always @ (posedge clk_i or posedge rst_i)
+-    if (rst_i)
+-        pc_fault_q <= 1'b0;
+-    else
+-        pc_fault_q <= pc_fault_r;
+-
+-    assign fetch_out_rd_o         = (~vm_i_enable_w & fetch_in_rd_i) || (itlb_hit_w & ~pc_fault_r);
+-    assign fetch_out_pc_o         = vm_i_enable_w ? {itlb_entry_q[31:12], fetch_in_pc_i[11:0]} : fetch_in_pc_i;
+-    assign fetch_out_flush_o      = fetch_in_flush_i;
+-    assign fetch_out_invalidate_o = fetch_in_invalidate_i; // TODO: ...
+-
+-    assign fetch_in_accept_o      = (~vm_i_enable_w & fetch_out_accept_i) | (vm_i_enable_w & itlb_hit_w & fetch_out_accept_i) | pc_fault_r;
+-    assign fetch_in_valid_o       = fetch_out_valid_i | pc_fault_q;
+-    assign fetch_in_error_o       = fetch_out_valid_i & fetch_out_error_i;
+-    assign fetch_in_fault_o       = pc_fault_q;
+-    assign fetch_in_inst_o        = fetch_out_inst_i;
+-
+-    //-----------------------------------------------------------------
+-    // DMMU TLB
+-    //-----------------------------------------------------------------
+-    reg         dtlb_valid_q;
+-    reg [31:12] dtlb_va_addr_q;
+-    reg [31:0]  dtlb_entry_q;
+-
+-    always @ (posedge clk_i or posedge rst_i)
+-    if (rst_i)
+-        dtlb_valid_q <= 1'b0;
+-    else if (flush_i)
+-        dtlb_valid_q <= 1'b0;
+-    else if (state_q == STATE_UPDATE && dtlb_req_q)
+-        dtlb_valid_q <= 1'b1;
+-
+-    always @ (posedge clk_i or posedge rst_i)
+-    if (rst_i)
+-    begin
+-        dtlb_va_addr_q <= 20'b0;
+-        dtlb_entry_q   <= 32'b0;
+-    end
+-    else if (state_q == STATE_UPDATE && dtlb_req_q)
+-    begin
+-        dtlb_va_addr_q <= virt_addr_q[31:12];
+-        dtlb_entry_q   <= pte_entry_q;
+-    end
+-
+-    // TLB address matched (even on page fault)
+-    assign dtlb_hit_w   = dtlb_valid_q & (dtlb_va_addr_q == lsu_addr_w[31:12]);
+-
+-    reg load_fault_r;
+-    always @ *
+-    begin
+-        load_fault_r = 1'b0;
+-
+-        if (vm_d_enable_w && load_w && dtlb_hit_w)
+-        begin
+-            // Supervisor mode
+-            if (supervisor_d_w)
+-            begin
+-                // User page, supervisor user mode not enabled
+-                if (dtlb_entry_q[`PAGE_USER] && !sum_i)
+-                    load_fault_r = 1'b1;
+-                // Check exec permissions
+-                else
+-                    load_fault_r = ~(dtlb_entry_q[`PAGE_READ] | (mxr_i & dtlb_entry_q[`PAGE_EXEC]));
+-            end
+-            // User mode
+-            else
+-                load_fault_r = (~dtlb_entry_q[`PAGE_READ]) | (~dtlb_entry_q[`PAGE_USER]);
+-        end
+-    end
+-
+-    reg store_fault_r;
+-    always @ *
+-    begin
+-        store_fault_r = 1'b0;
+-
+-        if (vm_d_enable_w && (|store_w) && dtlb_hit_w)
+-        begin
+-            // Supervisor mode
+-            if (supervisor_d_w)
+-            begin
+-                // User page, supervisor user mode not enabled
+-                if (dtlb_entry_q[`PAGE_USER] && !sum_i)
+-                    store_fault_r = 1'b1;
+-                // Check exec permissions
+-                else
+-                    store_fault_r = (~dtlb_entry_q[`PAGE_READ]) | (~dtlb_entry_q[`PAGE_WRITE]);
+-            end
+-            // User mode
+-            else
+-                store_fault_r = (~dtlb_entry_q[`PAGE_READ]) | (~dtlb_entry_q[`PAGE_WRITE]) | (~dtlb_entry_q[`PAGE_USER]);
+-        end
+-    end
+-
+-    reg store_fault_q;
+-    reg load_fault_q;
+-
+-    always @ (posedge clk_i or posedge rst_i)
+-    if (rst_i)
+-        store_fault_q <= 1'b0;
+-    else
+-        store_fault_q <= store_fault_r;
+-
+-    always @ (posedge clk_i or posedge rst_i)
+-    if (rst_i)
+-        load_fault_q <= 1'b0;
+-    else
+-        load_fault_q <= load_fault_r;   
+-
+-    wire        lsu_out_rd_w         = vm_d_enable_w ? (load_w  & dtlb_hit_w & ~load_fault_r)       : lsu_in_rd_i;
+-    wire [3:0]  lsu_out_wr_w         = vm_d_enable_w ? (store_w & {4{dtlb_hit_w & ~store_fault_r}}) : lsu_in_wr_i;
+-    wire [31:0] lsu_out_addr_w       = vm_d_enable_w ? {dtlb_entry_q[31:12], lsu_addr_w[11:0]}      : lsu_addr_w;
+-    wire [31:0] lsu_out_data_wr_w    = lsu_in_data_wr_i;
+-
+-    wire        lsu_out_invalidate_w = lsu_in_invalidate_i;
+-    wire        lsu_out_writeback_w  = lsu_in_writeback_i;
+-
+-    reg         lsu_out_cacheable_r;
+-    always @ *
+-    begin
+-/* verilator lint_off UNSIGNED */
+-/* verilator lint_off CMPCONST */
+-        if (lsu_in_invalidate_i || lsu_in_writeback_i || lsu_in_flush_i)
+-            lsu_out_cacheable_r = 1'b1;
+-        else
+-            lsu_out_cacheable_r = (lsu_out_addr_w >= MEM_CACHE_ADDR_MIN && lsu_out_addr_w <= MEM_CACHE_ADDR_MAX);
+-/* verilator lint_on CMPCONST */
+-/* verilator lint_on UNSIGNED */
+-    end
+-
+-    wire [10:0] lsu_out_req_tag_w    = lsu_in_req_tag_i;
+-    wire        lsu_out_flush_w      = lsu_in_flush_i;
+-
+-    assign lsu_in_ack_o         = (lsu_out_ack_i & ~resp_mmu_w) | store_fault_q | load_fault_q;
+-    assign lsu_in_resp_tag_o    = lsu_out_resp_tag_i;
+-    assign lsu_in_error_o       = (lsu_out_error_i & ~resp_mmu_w) | store_fault_q | load_fault_q;
+-    assign lsu_in_data_rd_o     = lsu_out_data_rd_i;
+-    assign lsu_in_store_fault_o = store_fault_q;
+-    assign lsu_in_load_fault_o  = load_fault_q;
+-
+-    assign lsu_in_accept_o      = (~vm_d_enable_w & cpu_accept_w) | (vm_d_enable_w & dtlb_hit_w & cpu_accept_w) | store_fault_r | load_fault_r;
+-
+-    //-----------------------------------------------------------------
+-    // PTE Fetch Port
+-    //-----------------------------------------------------------------
+-    reg mem_req_q;
+-    wire mmu_accept_w;
+-
+-    always @ (posedge clk_i or posedge rst_i)
+-    if (rst_i)
+-        mem_req_q <= 1'b0;
+-    else if (state_q == STATE_IDLE && (itlb_miss_w || dtlb_miss_w))
+-        mem_req_q <= 1'b1;
+-    else if (state_q == STATE_LEVEL_FIRST && resp_valid_w && !resp_error_w && resp_data_w[`PAGE_PRESENT] && (!(resp_data_w[`PAGE_READ] || resp_data_w[`PAGE_WRITE] || resp_data_w[`PAGE_EXEC])))
+-        mem_req_q <= 1'b1;    
+-    else if (mmu_accept_w)
+-        mem_req_q <= 1'b0;
+-
+-    //-----------------------------------------------------------------
+-    // Request Muxing
+-    //-----------------------------------------------------------------
+-    reg  read_hold_q;
+-    reg  src_mmu_q;
+-    wire src_mmu_w = read_hold_q ? src_mmu_q : mem_req_q;
+-
+-    always @ (posedge clk_i or posedge rst_i)
+-    if (rst_i)
+-    begin
+-        read_hold_q  <= 1'b0;
+-        src_mmu_q    <= 1'b0;
+-    end
+-    else if ((lsu_out_rd_o || (|lsu_out_wr_o)) && !lsu_out_accept_i)
+-    begin
+-        read_hold_q  <= 1'b1;
+-        src_mmu_q    <= src_mmu_w;
+-    end
+-    else if (lsu_out_accept_i)
+-        read_hold_q  <= 1'b0;
+-
+-    assign mmu_accept_w         = src_mmu_w  & lsu_out_accept_i;
+-    assign cpu_accept_w         = ~src_mmu_w & lsu_out_accept_i;
+-
+-    assign lsu_out_rd_o         = src_mmu_w ? mem_req_q  : lsu_out_rd_w;
+-    assign lsu_out_wr_o         = src_mmu_w ? 4'b0       : lsu_out_wr_w;
+-    assign lsu_out_addr_o       = src_mmu_w ? pte_addr_q : lsu_out_addr_w;
+-    assign lsu_out_data_wr_o    = lsu_out_data_wr_w;
+-
+-    assign lsu_out_invalidate_o = src_mmu_w ? 1'b0 : lsu_out_invalidate_w;
+-    assign lsu_out_writeback_o  = src_mmu_w ? 1'b0 : lsu_out_writeback_w;
+-    assign lsu_out_cacheable_o  = src_mmu_w ? 1'b1 : lsu_out_cacheable_r;
+-    assign lsu_out_req_tag_o    = src_mmu_w ? {1'b0, 3'b111, 7'b0} : lsu_out_req_tag_w;
+-    assign lsu_out_flush_o      = src_mmu_w ? 1'b0 : lsu_out_flush_w;
+-
+-end
++// generate
++// if (SUPPORT_MMU)
++// begin
++
++//     //-----------------------------------------------------------------
++//     // Registers
++//     //-----------------------------------------------------------------
++//     reg [STATE_W-1:0] state_q;
++//     wire              idle_w = (state_q == STATE_IDLE);
++
++//     // Magic combo used only by MMU
++//     wire        resp_mmu_w   = (lsu_out_resp_tag_i[9:7] == 3'b111);
++//     wire        resp_valid_w = resp_mmu_w & lsu_out_ack_i;
++//     wire        resp_error_w = resp_mmu_w & lsu_out_error_i;
++//     wire [31:0] resp_data_w  = lsu_out_data_rd_i;
++
++//     wire        cpu_accept_w;
++
++//     //-----------------------------------------------------------------
++//     // Load / Store
++//     //-----------------------------------------------------------------
++//     reg       load_q;
++//     reg [3:0] store_q;
++
++//     always @ (posedge clk_i or posedge rst_i)
++//     if (rst_i)
++//         load_q <= 1'b0;
++//     else if (lsu_in_rd_i)
++//         load_q <= ~lsu_in_accept_o;
++
++//     always @ (posedge clk_i or posedge rst_i)
++//     if (rst_i)
++//         store_q <= 4'b0;
++//     else if (|lsu_in_wr_i)
++//         store_q <= lsu_in_accept_o ? 4'b0 : lsu_in_wr_i;
++
++//     wire       load_w  = lsu_in_rd_i | load_q;
++//     wire [3:0] store_w = lsu_in_wr_i | store_q;
++
++//     reg [31:0] lsu_in_addr_q;
++
++//     always @ (posedge clk_i or posedge rst_i)
++//     if (rst_i)
++//         lsu_in_addr_q <= 32'b0;
++//     else if (load_w || (|store_w))
++//         lsu_in_addr_q <= lsu_in_addr_i;
++
++//     wire [31:0] lsu_addr_w = (load_w || (|store_w)) ? lsu_in_addr_i : lsu_in_addr_q;
++
++//     //-----------------------------------------------------------------
++//     // Page table walker
++//     //-----------------------------------------------------------------
++//     wire        itlb_hit_w;
++//     wire        dtlb_hit_w;
++
++//     reg         dtlb_req_q;
++
++//     // Global enable
++//     wire        vm_enable_w = satp_i[`SATP_MODE_R];
++//     wire [31:0] ptbr_w      = {satp_i[`SATP_PPN_R], 12'b0};
++
++//     wire        ifetch_vm_w = (fetch_in_priv_i != `PRIV_MACHINE);
++//     wire        dfetch_vm_w = (priv_d_i != `PRIV_MACHINE);
++
++//     wire        supervisor_i_w = (fetch_in_priv_i == `PRIV_SUPER);
++//     wire        supervisor_d_w = (priv_d_i == `PRIV_SUPER);
++
++//     wire        vm_i_enable_w = (ifetch_vm_w);
++//     wire        vm_d_enable_w = (vm_enable_w & dfetch_vm_w);
++
++//     // TLB entry does not match request address
++//     wire        itlb_miss_w = fetch_in_rd_i & vm_i_enable_w & ~itlb_hit_w;
++//     wire        dtlb_miss_w = (load_w || (|store_w)) & vm_d_enable_w & ~dtlb_hit_w;
++
++//     // Data miss is higher priority than instruction...
++//     wire [31:0] request_addr_w = idle_w ? 
++//                                 (dtlb_miss_w ? lsu_addr_w : fetch_in_pc_i) :
++//                                  dtlb_req_q ? lsu_addr_w : fetch_in_pc_i;
++
++//     reg [31:0]  pte_addr_q;
++//     reg [31:0]  pte_entry_q;
++//     reg [31:0]  virt_addr_q;
++
++//     wire [31:0] pte_ppn_w   = {`PAGE_PFN_SHIFT'b0, resp_data_w[31:`PAGE_PFN_SHIFT]};
++//     wire [9:0]  pte_flags_w = resp_data_w[9:0];
++
++//     always @ (posedge clk_i or posedge rst_i)
++//     if (rst_i)
++//     begin
++//         pte_addr_q  <= 32'b0;
++//         pte_entry_q <= 32'b0;
++//         virt_addr_q <= 32'b0;
++//         dtlb_req_q  <= 1'b0;
++//         state_q     <= STATE_IDLE;
++//     end
++//     else
++//     begin
++//         // TLB miss, walk page table
++//         if (state_q == STATE_IDLE && (itlb_miss_w || dtlb_miss_w))
++//         begin
++//             pte_addr_q  <= ptbr_w + {20'b0, request_addr_w[31:22], 2'b0};
++//             virt_addr_q <= request_addr_w;
++//             dtlb_req_q  <= dtlb_miss_w;
++
++//             state_q     <= STATE_LEVEL_FIRST;
++//         end
++//         // First level (4MB superpage)
++//         else if (state_q == STATE_LEVEL_FIRST && resp_valid_w)
++//         begin
++//             // Error or page not present
++//             if (resp_error_w || !resp_data_w[`PAGE_PRESENT])
++//             begin
++//                 pte_entry_q <= 32'b0;
++//                 state_q     <= STATE_UPDATE;
++//             end
++//             // Valid entry, but another level to fetch
++//             else if (!(resp_data_w[`PAGE_READ] || resp_data_w[`PAGE_WRITE] || resp_data_w[`PAGE_EXEC]))
++//             begin
++//                 pte_addr_q  <= {resp_data_w[29:10], 12'b0} + {20'b0, request_addr_w[21:12], 2'b0};
++//                 state_q     <= STATE_LEVEL_SECOND;
++//             end
++//             // Valid entry, actual valid PTE
++//             else
++//             begin
++//                 pte_entry_q <= ((pte_ppn_w | {22'b0, request_addr_w[21:12]}) << `MMU_PGSHIFT) | {22'b0, pte_flags_w};
++//                 state_q     <= STATE_UPDATE;
++//             end
++//         end
++//         // Second level (4KB page)
++//         else if (state_q == STATE_LEVEL_SECOND && resp_valid_w)
++//         begin
++//             // Valid entry, final level
++//             if (resp_data_w[`PAGE_PRESENT])
++//             begin
++//                 pte_entry_q <= (pte_ppn_w << `MMU_PGSHIFT) | {22'b0, pte_flags_w};
++//                 state_q     <= STATE_UPDATE;
++//             end
++//             // Page fault
++//             else
++//             begin
++//                 pte_entry_q <= 32'b0;
++//                 state_q     <= STATE_UPDATE;
++//             end
++//         end
++//         else if (state_q == STATE_UPDATE)
++//         begin
++//             state_q    <= STATE_IDLE;
++//         end
++//     end
++
++//     //-----------------------------------------------------------------
++//     // IMMU TLB
++//     //-----------------------------------------------------------------
++//     reg         itlb_valid_q;
++//     reg [31:12] itlb_va_addr_q;
++//     reg [31:0]  itlb_entry_q;
++
++//     always @ (posedge clk_i or posedge rst_i)
++//     if (rst_i)
++//         itlb_valid_q <= 1'b0;
++//     else if (flush_i)
++//         itlb_valid_q <= 1'b0;
++//     else if (state_q == STATE_UPDATE && !dtlb_req_q)
++//         itlb_valid_q <= (itlb_va_addr_q == fetch_in_pc_i[31:12]); // Fetch TLB still matches incoming request
++//     else if (state_q != STATE_IDLE && !dtlb_req_q)
++//         itlb_valid_q <= 1'b0;
++
++//     always @ (posedge clk_i or posedge rst_i)
++//     if (rst_i)
++//     begin
++//         itlb_va_addr_q <= 20'b0;
++//         itlb_entry_q   <= 32'b0;
++//     end
++//     else if (state_q == STATE_UPDATE && !dtlb_req_q)
++//     begin
++//         itlb_va_addr_q <= virt_addr_q[31:12];
++//         itlb_entry_q   <= pte_entry_q;
++//     end
++
++//     // TLB address matched (even on page fault)
++//     assign itlb_hit_w   = fetch_in_rd_i & itlb_valid_q & (itlb_va_addr_q == fetch_in_pc_i[31:12]);
++
++//     reg pc_fault_r;
++//     always @ *
++//     begin
++//         pc_fault_r = 1'b0;
++
++//         if (vm_i_enable_w && itlb_hit_w)
++//         begin
++//             // Supervisor mode
++//             if (supervisor_i_w)
++//             begin
++//                 // User page, supervisor cannot execute
++//                 if (itlb_entry_q[`PAGE_USER])
++//                     pc_fault_r = 1'b1;
++//                 // Check exec permissions
++//                 else
++//                     pc_fault_r = ~itlb_entry_q[`PAGE_EXEC];
++//             end
++//             // User mode
++//             else
++//                 pc_fault_r = (~itlb_entry_q[`PAGE_EXEC]) | (~itlb_entry_q[`PAGE_USER]);
++//         end
++//     end
++
++//     reg pc_fault_q;
++
++//     always @ (posedge clk_i or posedge rst_i)
++//     if (rst_i)
++//         pc_fault_q <= 1'b0;
++//     else
++//         pc_fault_q <= pc_fault_r;
++
++//     assign fetch_out_rd_o         = (~vm_i_enable_w & fetch_in_rd_i) || (itlb_hit_w & ~pc_fault_r);
++//     assign fetch_out_pc_o         = vm_i_enable_w ? {itlb_entry_q[31:12], fetch_in_pc_i[11:0]} : fetch_in_pc_i;
++//     assign fetch_out_flush_o      = fetch_in_flush_i;
++//     assign fetch_out_invalidate_o = fetch_in_invalidate_i; // TODO: ...
++
++//     assign fetch_in_accept_o      = (~vm_i_enable_w & fetch_out_accept_i) | (vm_i_enable_w & itlb_hit_w & fetch_out_accept_i) | pc_fault_r;
++//     assign fetch_in_valid_o       = fetch_out_valid_i | pc_fault_q;
++//     assign fetch_in_error_o       = fetch_out_valid_i & fetch_out_error_i;
++//     assign fetch_in_fault_o       = pc_fault_q;
++//     assign fetch_in_inst_o        = fetch_out_inst_i;
++
++//     //-----------------------------------------------------------------
++//     // DMMU TLB
++//     //-----------------------------------------------------------------
++//     reg         dtlb_valid_q;
++//     reg [31:12] dtlb_va_addr_q;
++//     reg [31:0]  dtlb_entry_q;
++
++//     always @ (posedge clk_i or posedge rst_i)
++//     if (rst_i)
++//         dtlb_valid_q <= 1'b0;
++//     else if (flush_i)
++//         dtlb_valid_q <= 1'b0;
++//     else if (state_q == STATE_UPDATE && dtlb_req_q)
++//         dtlb_valid_q <= 1'b1;
++
++//     always @ (posedge clk_i or posedge rst_i)
++//     if (rst_i)
++//     begin
++//         dtlb_va_addr_q <= 20'b0;
++//         dtlb_entry_q   <= 32'b0;
++//     end
++//     else if (state_q == STATE_UPDATE && dtlb_req_q)
++//     begin
++//         dtlb_va_addr_q <= virt_addr_q[31:12];
++//         dtlb_entry_q   <= pte_entry_q;
++//     end
++
++//     // TLB address matched (even on page fault)
++//     assign dtlb_hit_w   = dtlb_valid_q & (dtlb_va_addr_q == lsu_addr_w[31:12]);
++
++//     reg load_fault_r;
++//     always @ *
++//     begin
++//         load_fault_r = 1'b0;
++
++//         if (vm_d_enable_w && load_w && dtlb_hit_w)
++//         begin
++//             // Supervisor mode
++//             if (supervisor_d_w)
++//             begin
++//                 // User page, supervisor user mode not enabled
++//                 if (dtlb_entry_q[`PAGE_USER] && !sum_i)
++//                     load_fault_r = 1'b1;
++//                 // Check exec permissions
++//                 else
++//                     load_fault_r = ~(dtlb_entry_q[`PAGE_READ] | (mxr_i & dtlb_entry_q[`PAGE_EXEC]));
++//             end
++//             // User mode
++//             else
++//                 load_fault_r = (~dtlb_entry_q[`PAGE_READ]) | (~dtlb_entry_q[`PAGE_USER]);
++//         end
++//     end
++
++//     reg store_fault_r;
++//     always @ *
++//     begin
++//         store_fault_r = 1'b0;
++
++//         if (vm_d_enable_w && (|store_w) && dtlb_hit_w)
++//         begin
++//             // Supervisor mode
++//             if (supervisor_d_w)
++//             begin
++//                 // User page, supervisor user mode not enabled
++//                 if (dtlb_entry_q[`PAGE_USER] && !sum_i)
++//                     store_fault_r = 1'b1;
++//                 // Check exec permissions
++//                 else
++//                     store_fault_r = (~dtlb_entry_q[`PAGE_READ]) | (~dtlb_entry_q[`PAGE_WRITE]);
++//             end
++//             // User mode
++//             else
++//                 store_fault_r = (~dtlb_entry_q[`PAGE_READ]) | (~dtlb_entry_q[`PAGE_WRITE]) | (~dtlb_entry_q[`PAGE_USER]);
++//         end
++//     end
++
++//     reg store_fault_q;
++//     reg load_fault_q;
++
++//     always @ (posedge clk_i or posedge rst_i)
++//     if (rst_i)
++//         store_fault_q <= 1'b0;
++//     else
++//         store_fault_q <= store_fault_r;
++
++//     always @ (posedge clk_i or posedge rst_i)
++//     if (rst_i)
++//         load_fault_q <= 1'b0;
++//     else
++//         load_fault_q <= load_fault_r;   
++
++//     wire        lsu_out_rd_w         = vm_d_enable_w ? (load_w  & dtlb_hit_w & ~load_fault_r)       : lsu_in_rd_i;
++//     wire [3:0]  lsu_out_wr_w         = vm_d_enable_w ? (store_w & {4{dtlb_hit_w & ~store_fault_r}}) : lsu_in_wr_i;
++//     wire [31:0] lsu_out_addr_w       = vm_d_enable_w ? {dtlb_entry_q[31:12], lsu_addr_w[11:0]}      : lsu_addr_w;
++//     wire [31:0] lsu_out_data_wr_w    = lsu_in_data_wr_i;
++
++//     wire        lsu_out_invalidate_w = lsu_in_invalidate_i;
++//     wire        lsu_out_writeback_w  = lsu_in_writeback_i;
++
++//     reg         lsu_out_cacheable_r;
++//     always @ *
++//     begin
++// /* verilator lint_off UNSIGNED */
++// /* verilator lint_off CMPCONST */
++//         if (lsu_in_invalidate_i || lsu_in_writeback_i || lsu_in_flush_i)
++//             lsu_out_cacheable_r = 1'b1;
++//         else
++//             lsu_out_cacheable_r = (lsu_out_addr_w >= MEM_CACHE_ADDR_MIN && lsu_out_addr_w <= MEM_CACHE_ADDR_MAX);
++// /* verilator lint_on CMPCONST */
++// /* verilator lint_on UNSIGNED */
++//     end
++
++//     wire [10:0] lsu_out_req_tag_w    = lsu_in_req_tag_i;
++//     wire        lsu_out_flush_w      = lsu_in_flush_i;
++
++//     assign lsu_in_ack_o         = (lsu_out_ack_i & ~resp_mmu_w) | store_fault_q | load_fault_q;
++//     assign lsu_in_resp_tag_o    = lsu_out_resp_tag_i;
++//     assign lsu_in_error_o       = (lsu_out_error_i & ~resp_mmu_w) | store_fault_q | load_fault_q;
++//     assign lsu_in_data_rd_o     = lsu_out_data_rd_i;
++//     assign lsu_in_store_fault_o = store_fault_q;
++//     assign lsu_in_load_fault_o  = load_fault_q;
++
++//     assign lsu_in_accept_o      = (~vm_d_enable_w & cpu_accept_w) | (vm_d_enable_w & dtlb_hit_w & cpu_accept_w) | store_fault_r | load_fault_r;
++
++//     //-----------------------------------------------------------------
++//     // PTE Fetch Port
++//     //-----------------------------------------------------------------
++//     reg mem_req_q;
++//     wire mmu_accept_w;
++
++//     always @ (posedge clk_i or posedge rst_i)
++//     if (rst_i)
++//         mem_req_q <= 1'b0;
++//     else if (state_q == STATE_IDLE && (itlb_miss_w || dtlb_miss_w))
++//         mem_req_q <= 1'b1;
++//     else if (state_q == STATE_LEVEL_FIRST && resp_valid_w && !resp_error_w && resp_data_w[`PAGE_PRESENT] && (!(resp_data_w[`PAGE_READ] || resp_data_w[`PAGE_WRITE] || resp_data_w[`PAGE_EXEC])))
++//         mem_req_q <= 1'b1;    
++//     else if (mmu_accept_w)
++//         mem_req_q <= 1'b0;
++
++//     //-----------------------------------------------------------------
++//     // Request Muxing
++//     //-----------------------------------------------------------------
++//     reg  read_hold_q;
++//     reg  src_mmu_q;
++//     wire src_mmu_w = read_hold_q ? src_mmu_q : mem_req_q;
++
++//     always @ (posedge clk_i or posedge rst_i)
++//     if (rst_i)
++//     begin
++//         read_hold_q  <= 1'b0;
++//         src_mmu_q    <= 1'b0;
++//     end
++//     else if ((lsu_out_rd_o || (|lsu_out_wr_o)) && !lsu_out_accept_i)
++//     begin
++//         read_hold_q  <= 1'b1;
++//         src_mmu_q    <= src_mmu_w;
++//     end
++//     else if (lsu_out_accept_i)
++//         read_hold_q  <= 1'b0;
++
++//     assign mmu_accept_w         = src_mmu_w  & lsu_out_accept_i;
++//     assign cpu_accept_w         = ~src_mmu_w & lsu_out_accept_i;
++
++//     assign lsu_out_rd_o         = src_mmu_w ? mem_req_q  : lsu_out_rd_w;
++//     assign lsu_out_wr_o         = src_mmu_w ? 4'b0       : lsu_out_wr_w;
++//     assign lsu_out_addr_o       = src_mmu_w ? pte_addr_q : lsu_out_addr_w;
++//     assign lsu_out_data_wr_o    = lsu_out_data_wr_w;
++
++//     assign lsu_out_invalidate_o = src_mmu_w ? 1'b0 : lsu_out_invalidate_w;
++//     assign lsu_out_writeback_o  = src_mmu_w ? 1'b0 : lsu_out_writeback_w;
++//     assign lsu_out_cacheable_o  = src_mmu_w ? 1'b1 : lsu_out_cacheable_r;
++//     assign lsu_out_req_tag_o    = src_mmu_w ? {1'b0, 3'b111, 7'b0} : lsu_out_req_tag_w;
++//     assign lsu_out_flush_o      = src_mmu_w ? 1'b0 : lsu_out_flush_w;
++
++// end
+ //-----------------------------------------------------------------
+ // No MMU support
+ //-----------------------------------------------------------------
+-else
+-begin
++// else
++// begin
+     assign fetch_out_rd_o         = fetch_in_rd_i;
+     assign fetch_out_pc_o         = fetch_in_pc_i;
+     assign fetch_out_flush_o      = fetch_in_flush_i;
+@@ -564,7 +564,7 @@ begin
+     assign lsu_in_load_fault_o    = 1'b0;
+ 
+     assign lsu_in_accept_o        = lsu_out_accept_i;
+-end
+-endgenerate
++// end
++// endgenerate
+ 
+ endmodule
+diff --git a/core/riscv/riscv_regfile.v b/core/riscv/riscv_regfile.v
+index 0df4015..94b2b13 100644
+--- a/core/riscv/riscv_regfile.v
++++ b/core/riscv/riscv_regfile.v
+@@ -65,31 +65,31 @@ module riscv_regfile
+ //-----------------------------------------------------------------
+ // Xilinx specific register file (single issue)
+ //-----------------------------------------------------------------
+-generate
+-if (SUPPORT_REGFILE_XILINX)
+-begin: REGFILE_XILINX_SINGLE
++// generate
++// if (SUPPORT_REGFILE_XILINX)
++// begin: REGFILE_XILINX_SINGLE
+ 
+-    riscv_xilinx_2r1w
+-    u_reg
+-    (
+-        // Inputs
+-         .clk_i(clk_i)
+-        ,.rst_i(rst_i)
+-        ,.rd0_i(rd0_i)
+-        ,.rd0_value_i(rd0_value_i)
+-        ,.ra_i(ra0_i)
+-        ,.rb_i(rb0_i)
++//     riscv_xilinx_2r1w
++//     u_reg
++//     (
++//         // Inputs
++//          .clk_i(clk_i)
++//         ,.rst_i(rst_i)
++//         ,.rd0_i(rd0_i)
++//         ,.rd0_value_i(rd0_value_i)
++//         ,.ra_i(ra0_i)
++//         ,.rb_i(rb0_i)
+ 
+-        // Outputs
+-        ,.ra_value_o(ra0_value_o)
+-        ,.rb_value_o(rb0_value_o)
+-    );
+-end
++//         // Outputs
++//         ,.ra_value_o(ra0_value_o)
++//         ,.rb_value_o(rb0_value_o)
++//     );
++// end
+ //-----------------------------------------------------------------
+ // Flop based register file
+ //-----------------------------------------------------------------
+-else
+-begin: REGFILE
++// else
++// begin: REGFILE
+     reg [31:0] reg_r1_q;
+     reg [31:0] reg_r2_q;
+     reg [31:0] reg_r3_q;
+@@ -315,93 +315,93 @@ begin: REGFILE
+     //-------------------------------------------------------------
+     // get_register: Read register file
+     //-------------------------------------------------------------
+-    `ifdef verilator
+-    function [31:0] get_register; /*verilator public*/
+-        input [4:0] r;
+-    begin
+-        case (r)
+-        5'd1: get_register = reg_r1_q;
+-        5'd2: get_register = reg_r2_q;
+-        5'd3: get_register = reg_r3_q;
+-        5'd4: get_register = reg_r4_q;
+-        5'd5: get_register = reg_r5_q;
+-        5'd6: get_register = reg_r6_q;
+-        5'd7: get_register = reg_r7_q;
+-        5'd8: get_register = reg_r8_q;
+-        5'd9: get_register = reg_r9_q;
+-        5'd10: get_register = reg_r10_q;
+-        5'd11: get_register = reg_r11_q;
+-        5'd12: get_register = reg_r12_q;
+-        5'd13: get_register = reg_r13_q;
+-        5'd14: get_register = reg_r14_q;
+-        5'd15: get_register = reg_r15_q;
+-        5'd16: get_register = reg_r16_q;
+-        5'd17: get_register = reg_r17_q;
+-        5'd18: get_register = reg_r18_q;
+-        5'd19: get_register = reg_r19_q;
+-        5'd20: get_register = reg_r20_q;
+-        5'd21: get_register = reg_r21_q;
+-        5'd22: get_register = reg_r22_q;
+-        5'd23: get_register = reg_r23_q;
+-        5'd24: get_register = reg_r24_q;
+-        5'd25: get_register = reg_r25_q;
+-        5'd26: get_register = reg_r26_q;
+-        5'd27: get_register = reg_r27_q;
+-        5'd28: get_register = reg_r28_q;
+-        5'd29: get_register = reg_r29_q;
+-        5'd30: get_register = reg_r30_q;
+-        5'd31: get_register = reg_r31_q;
+-        default : get_register = 32'h00000000;
+-        endcase
+-    end
+-    endfunction
+-    //-------------------------------------------------------------
+-    // set_register: Write register file
+-    //-------------------------------------------------------------
+-    function set_register; /*verilator public*/
+-        input [4:0] r;
+-        input [31:0] value;
+-    begin
+-        //case (r)
+-        //5'd1:  reg_r1_q  <= value;
+-        //5'd2:  reg_r2_q  <= value;
+-        //5'd3:  reg_r3_q  <= value;
+-        //5'd4:  reg_r4_q  <= value;
+-        //5'd5:  reg_r5_q  <= value;
+-        //5'd6:  reg_r6_q  <= value;
+-        //5'd7:  reg_r7_q  <= value;
+-        //5'd8:  reg_r8_q  <= value;
+-        //5'd9:  reg_r9_q  <= value;
+-        //5'd10: reg_r10_q <= value;
+-        //5'd11: reg_r11_q <= value;
+-        //5'd12: reg_r12_q <= value;
+-        //5'd13: reg_r13_q <= value;
+-        //5'd14: reg_r14_q <= value;
+-        //5'd15: reg_r15_q <= value;
+-        //5'd16: reg_r16_q <= value;
+-        //5'd17: reg_r17_q <= value;
+-        //5'd18: reg_r18_q <= value;
+-        //5'd19: reg_r19_q <= value;
+-        //5'd20: reg_r20_q <= value;
+-        //5'd21: reg_r21_q <= value;
+-        //5'd22: reg_r22_q <= value;
+-        //5'd23: reg_r23_q <= value;
+-        //5'd24: reg_r24_q <= value;
+-        //5'd25: reg_r25_q <= value;
+-        //5'd26: reg_r26_q <= value;
+-        //5'd27: reg_r27_q <= value;
+-        //5'd28: reg_r28_q <= value;
+-        //5'd29: reg_r29_q <= value;
+-        //5'd30: reg_r30_q <= value;
+-        //5'd31: reg_r31_q <= value;
+-        //default :
+-        //    ;
+-        //endcase
+-    end
+-    endfunction
+-    `endif
++    // `ifdef verilator
++    // function [31:0] get_register; /*verilator public*/
++    //     input [4:0] r;
++    // begin
++    //     case (r)
++    //     5'd1: get_register = reg_r1_q;
++    //     5'd2: get_register = reg_r2_q;
++    //     5'd3: get_register = reg_r3_q;
++    //     5'd4: get_register = reg_r4_q;
++    //     5'd5: get_register = reg_r5_q;
++    //     5'd6: get_register = reg_r6_q;
++    //     5'd7: get_register = reg_r7_q;
++    //     5'd8: get_register = reg_r8_q;
++    //     5'd9: get_register = reg_r9_q;
++    //     5'd10: get_register = reg_r10_q;
++    //     5'd11: get_register = reg_r11_q;
++    //     5'd12: get_register = reg_r12_q;
++    //     5'd13: get_register = reg_r13_q;
++    //     5'd14: get_register = reg_r14_q;
++    //     5'd15: get_register = reg_r15_q;
++    //     5'd16: get_register = reg_r16_q;
++    //     5'd17: get_register = reg_r17_q;
++    //     5'd18: get_register = reg_r18_q;
++    //     5'd19: get_register = reg_r19_q;
++    //     5'd20: get_register = reg_r20_q;
++    //     5'd21: get_register = reg_r21_q;
++    //     5'd22: get_register = reg_r22_q;
++    //     5'd23: get_register = reg_r23_q;
++    //     5'd24: get_register = reg_r24_q;
++    //     5'd25: get_register = reg_r25_q;
++    //     5'd26: get_register = reg_r26_q;
++    //     5'd27: get_register = reg_r27_q;
++    //     5'd28: get_register = reg_r28_q;
++    //     5'd29: get_register = reg_r29_q;
++    //     5'd30: get_register = reg_r30_q;
++    //     5'd31: get_register = reg_r31_q;
++    //     default : get_register = 32'h00000000;
++    //     endcase
++    // end
++    // endfunction
++    // //-------------------------------------------------------------
++    // // set_register: Write register file
++    // //-------------------------------------------------------------
++    // function set_register; /*verilator public*/
++    //     input [4:0] r;
++    //     input [31:0] value;
++    // begin
++    //     //case (r)
++    //     //5'd1:  reg_r1_q  <= value;
++    //     //5'd2:  reg_r2_q  <= value;
++    //     //5'd3:  reg_r3_q  <= value;
++    //     //5'd4:  reg_r4_q  <= value;
++    //     //5'd5:  reg_r5_q  <= value;
++    //     //5'd6:  reg_r6_q  <= value;
++    //     //5'd7:  reg_r7_q  <= value;
++    //     //5'd8:  reg_r8_q  <= value;
++    //     //5'd9:  reg_r9_q  <= value;
++    //     //5'd10: reg_r10_q <= value;
++    //     //5'd11: reg_r11_q <= value;
++    //     //5'd12: reg_r12_q <= value;
++    //     //5'd13: reg_r13_q <= value;
++    //     //5'd14: reg_r14_q <= value;
++    //     //5'd15: reg_r15_q <= value;
++    //     //5'd16: reg_r16_q <= value;
++    //     //5'd17: reg_r17_q <= value;
++    //     //5'd18: reg_r18_q <= value;
++    //     //5'd19: reg_r19_q <= value;
++    //     //5'd20: reg_r20_q <= value;
++    //     //5'd21: reg_r21_q <= value;
++    //     //5'd22: reg_r22_q <= value;
++    //     //5'd23: reg_r23_q <= value;
++    //     //5'd24: reg_r24_q <= value;
++    //     //5'd25: reg_r25_q <= value;
++    //     //5'd26: reg_r26_q <= value;
++    //     //5'd27: reg_r27_q <= value;
++    //     //5'd28: reg_r28_q <= value;
++    //     //5'd29: reg_r29_q <= value;
++    //     //5'd30: reg_r30_q <= value;
++    //     //5'd31: reg_r31_q <= value;
++    //     //default :
++    //     //    ;
++    //     //endcase
++    // end
++    // endfunction
++    // `endif
+ 
+-end
+-endgenerate
++// end
++// endgenerate
+ 
+ endmodule
