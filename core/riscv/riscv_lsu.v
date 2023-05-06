@@ -179,11 +179,11 @@ reg [3:0]   mem_wr_r;
 
 always @ *
 begin
-    mem_addr_r      = 32'b0;
-    mem_data_r      = 32'b0;
-    mem_unaligned_r = 1'b0;
-    mem_wr_r        = 4'b0;
-    mem_rd_r        = 1'b0;
+    // mem_addr_r      = 32'b0;
+    // mem_data_r      = 32'b0;
+    // mem_unaligned_r = 1'b0;
+    // mem_wr_r        = 4'b0;
+    // mem_rd_r        = 1'b0;
 
     if (opcode_valid_i && ((opcode_opcode_i & `INST_CSRRW_MASK) == `INST_CSRRW))
         mem_addr_r = opcode_ra_operand_i;
@@ -191,14 +191,18 @@ begin
         mem_addr_r = opcode_ra_operand_i + {{20{opcode_opcode_i[31]}}, opcode_opcode_i[31:20]};
     else
         mem_addr_r = opcode_ra_operand_i + {{20{opcode_opcode_i[31]}}, opcode_opcode_i[31:25], opcode_opcode_i[11:7]};
+end
 
+always @ *
+begin
     if (opcode_valid_i && req_sw_lw_w)
         mem_unaligned_r = (mem_addr_r[1:0] != 2'b0);
     else if (opcode_valid_i && req_sh_lh_w)
         mem_unaligned_r = mem_addr_r[0];
-
-    mem_rd_r = (opcode_valid_i && load_inst_w && !mem_unaligned_r);
-
+end
+    assign mem_rd_r = (opcode_valid_i && load_inst_w && !mem_unaligned_r);
+always @ *
+begin
     if (opcode_valid_i && ((opcode_opcode_i & `INST_SW_MASK) == `INST_SW) && !mem_unaligned_r)
     begin
         mem_data_r  = opcode_rb_operand_i;
@@ -243,11 +247,17 @@ begin
             mem_wr_r    = 4'b0001;
         end
         default :
-        ;
+        begin
+        mem_wr_r        = 4'b0;
+        mem_data_r      = 32'b0;
+        end
         endcase
     end
     else
+    begin
         mem_wr_r    = 4'b0;
+        mem_data_r      = 32'b0;
+    end
 end
 
 wire dcache_flush_w      = ((opcode_opcode_i & `INST_CSRRW_MASK) == `INST_CSRRW) && (opcode_opcode_i[31:20] == `CSR_DFLUSH);
@@ -341,7 +351,12 @@ wire [31:0] resp_addr_w;
 wire        resp_byte_w;
 wire        resp_half_w;
 wire        resp_signed_w;
-
+wire accept_o;
+wire valid_o;
+wire [35:0] data_in_i;
+assign data_in_i = {mem_addr_q, mem_ls_q, mem_xh_q, mem_xb_q, mem_load_q};
+wire [35:0] data_out_o;
+assign data_out_o = {resp_addr_w, resp_signed_w, resp_half_w, resp_byte_w, resp_load_w};
 riscv_lsu_fifo
 #(
      .WIDTH(36)
@@ -354,11 +369,11 @@ u_lsu_request
     ,.rst_i(rst_i)
 
     ,.push_i(((mem_rd_o || (|mem_wr_o) || mem_writeback_o || mem_invalidate_o || mem_flush_o) && mem_accept_i) || (mem_unaligned_e1_q && ~delay_lsu_e2_w))
-    ,.data_in_i({mem_addr_q, mem_ls_q, mem_xh_q, mem_xb_q, mem_load_q})
-    ,.accept_o()
+    ,.data_in_i(data_in_i)
+    ,.accept_o(accept_o)
 
-    ,.valid_o()
-    ,.data_out_o({resp_addr_w, resp_signed_w, resp_half_w, resp_byte_w, resp_load_w})
+    ,.valid_o(valid_o)
+    ,.data_out_o(data_out_o)
     ,.pop_i(mem_ack_i || mem_unaligned_e2_q)
 );
 
@@ -486,10 +501,10 @@ begin
     rd_ptr_q  <= {(ADDR_W) {1'b0}};
     wr_ptr_q  <= {(ADDR_W) {1'b0}};
 
-    for (i=0;i<DEPTH;i=i+1)
-    begin
-        ram_q[i] <= {(WIDTH) {1'b0}};
-    end
+    // for (i=0;i<DEPTH;i=i+1)
+    // begin
+    //     ram_q[i] <= {(WIDTH) {1'b0}};
+    // end
 end
 else
 begin

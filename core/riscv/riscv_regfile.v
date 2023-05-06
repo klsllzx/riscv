@@ -65,31 +65,31 @@ module riscv_regfile
 //-----------------------------------------------------------------
 // Xilinx specific register file (single issue)
 //-----------------------------------------------------------------
-generate
-if (SUPPORT_REGFILE_XILINX)
-begin: REGFILE_XILINX_SINGLE
+// generate
+// if (SUPPORT_REGFILE_XILINX)
+// begin: REGFILE_XILINX_SINGLE
 
-    riscv_xilinx_2r1w
-    u_reg
-    (
-        // Inputs
-         .clk_i(clk_i)
-        ,.rst_i(rst_i)
-        ,.rd0_i(rd0_i)
-        ,.rd0_value_i(rd0_value_i)
-        ,.ra_i(ra0_i)
-        ,.rb_i(rb0_i)
+//     riscv_xilinx_2r1w
+//     u_reg
+//     (
+//         // Inputs
+//          .clk_i(clk_i)
+//         ,.rst_i(rst_i)
+//         ,.rd0_i(rd0_i)
+//         ,.rd0_value_i(rd0_value_i)
+//         ,.ra_i(ra0_i)
+//         ,.rb_i(rb0_i)
 
-        // Outputs
-        ,.ra_value_o(ra0_value_o)
-        ,.rb_value_o(rb0_value_o)
-    );
-end
+//         // Outputs
+//         ,.ra_value_o(ra0_value_o)
+//         ,.rb_value_o(rb0_value_o)
+//     );
+// end
 //-----------------------------------------------------------------
 // Flop based register file
 //-----------------------------------------------------------------
-else
-begin: REGFILE
+// else
+// begin: REGFILE
     reg [31:0] reg_r1_q;
     reg [31:0] reg_r2_q;
     reg [31:0] reg_r3_q;
@@ -315,93 +315,93 @@ begin: REGFILE
     //-------------------------------------------------------------
     // get_register: Read register file
     //-------------------------------------------------------------
-    `ifdef verilator
-    function [31:0] get_register; /*verilator public*/
-        input [4:0] r;
-    begin
-        case (r)
-        5'd1: get_register = reg_r1_q;
-        5'd2: get_register = reg_r2_q;
-        5'd3: get_register = reg_r3_q;
-        5'd4: get_register = reg_r4_q;
-        5'd5: get_register = reg_r5_q;
-        5'd6: get_register = reg_r6_q;
-        5'd7: get_register = reg_r7_q;
-        5'd8: get_register = reg_r8_q;
-        5'd9: get_register = reg_r9_q;
-        5'd10: get_register = reg_r10_q;
-        5'd11: get_register = reg_r11_q;
-        5'd12: get_register = reg_r12_q;
-        5'd13: get_register = reg_r13_q;
-        5'd14: get_register = reg_r14_q;
-        5'd15: get_register = reg_r15_q;
-        5'd16: get_register = reg_r16_q;
-        5'd17: get_register = reg_r17_q;
-        5'd18: get_register = reg_r18_q;
-        5'd19: get_register = reg_r19_q;
-        5'd20: get_register = reg_r20_q;
-        5'd21: get_register = reg_r21_q;
-        5'd22: get_register = reg_r22_q;
-        5'd23: get_register = reg_r23_q;
-        5'd24: get_register = reg_r24_q;
-        5'd25: get_register = reg_r25_q;
-        5'd26: get_register = reg_r26_q;
-        5'd27: get_register = reg_r27_q;
-        5'd28: get_register = reg_r28_q;
-        5'd29: get_register = reg_r29_q;
-        5'd30: get_register = reg_r30_q;
-        5'd31: get_register = reg_r31_q;
-        default : get_register = 32'h00000000;
-        endcase
-    end
-    endfunction
-    //-------------------------------------------------------------
-    // set_register: Write register file
-    //-------------------------------------------------------------
-    function set_register; /*verilator public*/
-        input [4:0] r;
-        input [31:0] value;
-    begin
-        //case (r)
-        //5'd1:  reg_r1_q  <= value;
-        //5'd2:  reg_r2_q  <= value;
-        //5'd3:  reg_r3_q  <= value;
-        //5'd4:  reg_r4_q  <= value;
-        //5'd5:  reg_r5_q  <= value;
-        //5'd6:  reg_r6_q  <= value;
-        //5'd7:  reg_r7_q  <= value;
-        //5'd8:  reg_r8_q  <= value;
-        //5'd9:  reg_r9_q  <= value;
-        //5'd10: reg_r10_q <= value;
-        //5'd11: reg_r11_q <= value;
-        //5'd12: reg_r12_q <= value;
-        //5'd13: reg_r13_q <= value;
-        //5'd14: reg_r14_q <= value;
-        //5'd15: reg_r15_q <= value;
-        //5'd16: reg_r16_q <= value;
-        //5'd17: reg_r17_q <= value;
-        //5'd18: reg_r18_q <= value;
-        //5'd19: reg_r19_q <= value;
-        //5'd20: reg_r20_q <= value;
-        //5'd21: reg_r21_q <= value;
-        //5'd22: reg_r22_q <= value;
-        //5'd23: reg_r23_q <= value;
-        //5'd24: reg_r24_q <= value;
-        //5'd25: reg_r25_q <= value;
-        //5'd26: reg_r26_q <= value;
-        //5'd27: reg_r27_q <= value;
-        //5'd28: reg_r28_q <= value;
-        //5'd29: reg_r29_q <= value;
-        //5'd30: reg_r30_q <= value;
-        //5'd31: reg_r31_q <= value;
-        //default :
-        //    ;
-        //endcase
-    end
-    endfunction
-    `endif
+    // `ifdef verilator
+    // function [31:0] get_register; /*verilator public*/
+    //     input [4:0] r;
+    // begin
+    //     case (r)
+    //     5'd1: get_register = reg_r1_q;
+    //     5'd2: get_register = reg_r2_q;
+    //     5'd3: get_register = reg_r3_q;
+    //     5'd4: get_register = reg_r4_q;
+    //     5'd5: get_register = reg_r5_q;
+    //     5'd6: get_register = reg_r6_q;
+    //     5'd7: get_register = reg_r7_q;
+    //     5'd8: get_register = reg_r8_q;
+    //     5'd9: get_register = reg_r9_q;
+    //     5'd10: get_register = reg_r10_q;
+    //     5'd11: get_register = reg_r11_q;
+    //     5'd12: get_register = reg_r12_q;
+    //     5'd13: get_register = reg_r13_q;
+    //     5'd14: get_register = reg_r14_q;
+    //     5'd15: get_register = reg_r15_q;
+    //     5'd16: get_register = reg_r16_q;
+    //     5'd17: get_register = reg_r17_q;
+    //     5'd18: get_register = reg_r18_q;
+    //     5'd19: get_register = reg_r19_q;
+    //     5'd20: get_register = reg_r20_q;
+    //     5'd21: get_register = reg_r21_q;
+    //     5'd22: get_register = reg_r22_q;
+    //     5'd23: get_register = reg_r23_q;
+    //     5'd24: get_register = reg_r24_q;
+    //     5'd25: get_register = reg_r25_q;
+    //     5'd26: get_register = reg_r26_q;
+    //     5'd27: get_register = reg_r27_q;
+    //     5'd28: get_register = reg_r28_q;
+    //     5'd29: get_register = reg_r29_q;
+    //     5'd30: get_register = reg_r30_q;
+    //     5'd31: get_register = reg_r31_q;
+    //     default : get_register = 32'h00000000;
+    //     endcase
+    // end
+    // endfunction
+    // //-------------------------------------------------------------
+    // // set_register: Write register file
+    // //-------------------------------------------------------------
+    // function set_register; /*verilator public*/
+    //     input [4:0] r;
+    //     input [31:0] value;
+    // begin
+    //     //case (r)
+    //     //5'd1:  reg_r1_q  <= value;
+    //     //5'd2:  reg_r2_q  <= value;
+    //     //5'd3:  reg_r3_q  <= value;
+    //     //5'd4:  reg_r4_q  <= value;
+    //     //5'd5:  reg_r5_q  <= value;
+    //     //5'd6:  reg_r6_q  <= value;
+    //     //5'd7:  reg_r7_q  <= value;
+    //     //5'd8:  reg_r8_q  <= value;
+    //     //5'd9:  reg_r9_q  <= value;
+    //     //5'd10: reg_r10_q <= value;
+    //     //5'd11: reg_r11_q <= value;
+    //     //5'd12: reg_r12_q <= value;
+    //     //5'd13: reg_r13_q <= value;
+    //     //5'd14: reg_r14_q <= value;
+    //     //5'd15: reg_r15_q <= value;
+    //     //5'd16: reg_r16_q <= value;
+    //     //5'd17: reg_r17_q <= value;
+    //     //5'd18: reg_r18_q <= value;
+    //     //5'd19: reg_r19_q <= value;
+    //     //5'd20: reg_r20_q <= value;
+    //     //5'd21: reg_r21_q <= value;
+    //     //5'd22: reg_r22_q <= value;
+    //     //5'd23: reg_r23_q <= value;
+    //     //5'd24: reg_r24_q <= value;
+    //     //5'd25: reg_r25_q <= value;
+    //     //5'd26: reg_r26_q <= value;
+    //     //5'd27: reg_r27_q <= value;
+    //     //5'd28: reg_r28_q <= value;
+    //     //5'd29: reg_r29_q <= value;
+    //     //5'd30: reg_r30_q <= value;
+    //     //5'd31: reg_r31_q <= value;
+    //     //default :
+    //     //    ;
+    //     //endcase
+    // end
+    // endfunction
+    // `endif
 
-end
-endgenerate
+// end
+// endgenerate
 
 endmodule

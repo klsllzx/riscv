@@ -59,7 +59,7 @@ module riscv_alu
 //-----------------------------------------------------------------
 reg [31:0]      result_r;
 
-reg [31:16]     shift_right_fill_r;
+reg [15:0]     shift_right_fill_r;
 reg [31:0]      shift_right_1_r;
 reg [31:0]      shift_right_2_r;
 reg [31:0]      shift_right_4_r;
@@ -131,27 +131,27 @@ begin
                 shift_right_fill_r = 16'b0000000000000000;
 
             if (alu_b_i[0] == 1'b1)
-                shift_right_1_r = {shift_right_fill_r[31], alu_a_i[31:1]};
+                shift_right_1_r = {shift_right_fill_r[15], alu_a_i[31:1]};
             else
                 shift_right_1_r = alu_a_i;
 
             if (alu_b_i[1] == 1'b1)
-                shift_right_2_r = {shift_right_fill_r[31:30], shift_right_1_r[31:2]};
+                shift_right_2_r = {shift_right_fill_r[15:14], shift_right_1_r[31:2]};
             else
                 shift_right_2_r = shift_right_1_r;
 
             if (alu_b_i[2] == 1'b1)
-                shift_right_4_r = {shift_right_fill_r[31:28], shift_right_2_r[31:4]};
+                shift_right_4_r = {shift_right_fill_r[15:12], shift_right_2_r[31:4]};
             else
                 shift_right_4_r = shift_right_2_r;
 
             if (alu_b_i[3] == 1'b1)
-                shift_right_8_r = {shift_right_fill_r[31:24], shift_right_4_r[31:8]};
+                shift_right_8_r = {shift_right_fill_r[15:8], shift_right_4_r[31:8]};
             else
                 shift_right_8_r = shift_right_4_r;
 
             if (alu_b_i[4] == 1'b1)
-                result_r = {shift_right_fill_r[31:16], shift_right_8_r[31:16]};
+                result_r = {shift_right_fill_r[15:0], shift_right_8_r[31:16]};
             else
                 result_r = shift_right_8_r;
        end       
